@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import axios from "axios";
+import Table from "./components/table";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -27,71 +28,10 @@ const App = () => {
       item.languages.map((language) => languageSet.add(language.name))
     );
     setLanguages(Array.from(languageSet));
-    console.log(languageSet);
   };
   return (
     <div className="flex flex-col-reverse">
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Flag</th>
-              <th>Country Name</th>
-              <th>Population Density</th>
-              <th>Languages</th>
-              <th>currency</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((item) => {
-              if (
-                language === "Choose Language" ||
-                item.languages.filter((lang) => lang.name === language).length >
-                  0
-              ) {
-                return (
-                  <tr>
-                    <td>
-                      <img
-                        src={item.flag}
-                        width="30"
-                        height="30"
-                        alt="country-flag"
-                      />
-                    </td>
-                    <td>{item.name}</td>
-                    <td>
-                      {item.area && item.population
-                        ? Math.round(
-                            parseInt(item.population) / parseInt(item.area)
-                          )
-                        : "-"}
-                    </td>
-                    <td>
-                      {item.languages.map((language, i) => {
-                        if (i + 1 === item.languages.length) {
-                          return `${language.name} `;
-                        } else {
-                          return `${language.name}, `;
-                        }
-                      })}
-                    </td>
-                    <td>
-                      {item.currencies.map((currency, i) => {
-                        if (i + 1 === item.currencies.length) {
-                          return `${currency.name} `;
-                        } else {
-                          return `${currency.name}, `;
-                        }
-                      })}
-                    </td>
-                  </tr>
-                );
-              }
-            })}
-          </tbody>
-        </table>
-      </div>
+      <Table language={language} data={data} />
       <div className="ml-auto m-4">
         <Menu as="div" className="relative inline-block text-left p-2">
           <div>
@@ -103,7 +43,6 @@ const App = () => {
               />
             </Menu.Button>
           </div>
-
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
@@ -195,8 +134,8 @@ const App = () => {
             >
               <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1">
-                  {languages.map((lang) => (
-                    <Menu.Item onClick={() => setLanguage(lang)}>
+                  {languages.map((lang, i) => (
+                    <Menu.Item key={i} onClick={() => setLanguage(lang)}>
                       {({ active }) => (
                         <a
                           href="/#"
